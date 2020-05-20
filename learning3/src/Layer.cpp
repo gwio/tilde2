@@ -35,7 +35,7 @@ Layer::~Layer() {
 
 
 void Layer::setup(SceneType Type) {
-	scene_ptr.reset();
+	
 	scene_ptr = CreateScene(Type);
 	scene_ptr->setup();
 	sceneGroup.add(gui()); // add general scene menu
@@ -87,7 +87,7 @@ void Layer::deleteScene() {
 
 shared_ptr<Scene> Layer::CreateScene(SceneType Type)
 {
-	delete &scene_ptr;
+	
 	switch (Type)
 	{
 	// ##### Defaults

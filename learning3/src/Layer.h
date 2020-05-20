@@ -58,7 +58,7 @@ public:
 
 	// ##### Factory Design Scene Change
 
-	static Scene *CreateScene(SceneType Type);
+	shared_ptr<Scene> CreateScene(SceneType Type);
 
 	// ##### GUI Setup
 
@@ -83,10 +83,17 @@ public:
 	int id; // layer id
 	static int activeLayer;
 
-	Scene *scene;
-
+	Scene &scene() {
+		return *scene_ptr;
+	};
+	/*
+	const Scene &scene() const { 
+		return *scene_ptr; 
+	};
+	*/
+	shared_ptr<Scene> scene_ptr;
 private:
-
+	
 };
 
 #endif

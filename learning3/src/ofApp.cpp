@@ -32,11 +32,21 @@ void ofApp::setup(){
 	mainMenu.setup(mainGroup);
 
 	// ##### Layer System
+	//allocating the vector with 3 empty/basic objects
+	myLayers.resize(NUMLAYERS);
 
-	for (size_t i = 0; i < NUMLAYERS; ++i)
+	//temporary layer object that will be copied into the vector
+	//Layer tempLayer;
+	for (int i = 0; i < myLayers.size(); ++i)
 	{
-		layers[i] = new Layer(i + 1);
-		layers[i]->setup(Scene_Default);
+		shared_ptr<Layer> tempPtr(new Layer(i + 1));
+		//tempLayer = Layer(i + 1);
+		myLayers.at(i) = tempPtr;
+		//setup layer
+		myLayers.at(i)->setup(Scene_Default);
+
+		//layers[i] = new Layer(i + 1);
+		//layers[i]->setup(Scene_Default);
 	}
 }
 
@@ -53,9 +63,10 @@ void ofApp::update(){
 	// ##### Layer System
 	// ##### update very layer
 
-	for (size_t i = 0; i < NUMLAYERS; i++)
+	//change to vector syntax
+	for (int i = 0; i < myLayers.size(); ++i)
 	{
-		layers[i]->update();
+		myLayers.at(i)->update();
 	}
 }
 
@@ -77,10 +88,11 @@ void ofApp::draw(){
 
 	// # Display Layer Info
 
-	for (size_t i = 0; i < NUMLAYERS; i++)
+	for (int i = 0; i < myLayers.size(); ++i)
 	{
 		string active = "";
-		if (layers[i]->isActiveLayer()) { active = "> "; }
+		//change to vector syntax
+		if (myLayers.at(i)->isActiveLayer()) { active = "> "; }
 		string number = std::to_string(i+1);
 		string text = active + "Layer " + number;
 		float w = ofGetWidth() - 55;
@@ -98,9 +110,10 @@ void ofApp::draw(){
 	// ##### Layer System
 	// ##### draw every layer
 
-	for (size_t i = 0; i < NUMLAYERS; i++) // draw every layer
+	for (int i = 0; i < myLayers.size(); ++i) // draw every layer
 	{
-		layers[i]->draw();
+		//change to vector syntax
+		myLayers.at(i)->draw();
 	}
 
 	// ##### Main GUI Draw ( wait why do I have two of these again ?)
@@ -144,6 +157,21 @@ void ofApp::keyPressed(int key){
 	{
 	case ' ':
 		// used for testing things
+
+		myLayers.clear();
+		myLayers.resize(3);
+		for (int i = 0; i < myLayers.size(); ++i)
+		{
+			shared_ptr<Layer> tempPtr(new Layer(i + 1));
+			//tempLayer = Layer(i + 1);
+			myLayers.at(i) = tempPtr;
+			//setup layer
+			myLayers.at(i)->setup(Scene_Default);
+
+			//layers[i] = new Layer(i + 1);
+			//layers[i]->setup(Scene_Default);
+		}
+
 		break;
 	case 'p':
 	{
@@ -170,9 +198,10 @@ void ofApp::keyPressed(int key){
 	case 'n': startScene(Scene_SimplexTerrain); break;
 	case 'm': startScene(Scene_DomainWarping); break;
 	case ',': startScene(Scene_SpaceColonization); break;
-	case '1':	layers[0]->setActiveLayer(); break;
-	case '2':	layers[1]->setActiveLayer(); break;
-	case '3':	layers[2]->setActiveLayer(); break;
+	//change to vector syntax
+	case '1':	myLayers.at(0)->setActiveLayer(); break;
+	case '2':	myLayers.at(1)->setActiveLayer(); break;
+	case '3':	myLayers.at(2)->setActiveLayer(); break;
 	//case '4':	activeLayer = 4; break;
 	//case '5':	activeLayer = 5; break;
 	//case '6':	activeLayer = 6; break;
@@ -186,12 +215,22 @@ void ofApp::keyPressed(int key){
 // ###### Start Scene and Delete Old one Before
 
 void ofApp::startScene(SceneType Type) {
-	for (size_t i = 0; i < NUMLAYERS; i++)
+	//same es in setup()
+	Layer tempLayer;
+
+	for (int i = 0; i < myLayers.size(); ++i)
 	{
-		if (layers[i]->isActiveLayer())
-		{
-			layers[i] = new Layer(i + 1);
-			layers[i]->setup(Type);
+		if (myLayers.at(i)->isActiveLayer())
+		{			
+			
+			shared_ptr<Layer> tempPtr(new Layer(i + 1));
+			//tempLayer = Layer(i + 1);
+			myLayers.at(i) = tempPtr;
+			//setup layer
+			myLayers.at(i)->setup(Type);
+
+			//layers[i] = new Layer(i + 1);
+			//layers[i]->setup(Type);
 			break;
 		}
 	}

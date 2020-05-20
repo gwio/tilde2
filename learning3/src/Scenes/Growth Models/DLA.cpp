@@ -20,7 +20,8 @@ DLA::DLA() {
 	octree = new Octree(ofVec3f(ofGetWidth()/2, ofGetHeight(),0), ofGetWidth()*2, true);
 }
 DLA::~DLA() {
-	delete this;
+	//somehow conflicts with shared pointer managment
+	//delete this;
 }
 
 void DLA::setup() {

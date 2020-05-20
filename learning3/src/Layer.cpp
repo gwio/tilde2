@@ -35,11 +35,11 @@ Layer::~Layer() {
 
 
 void Layer::setup(SceneType Type) {
-
-	scene = CreateScene(Type);
-	scene->setup();
+	scene_ptr.reset();
+	scene_ptr = CreateScene(Type);
+	scene_ptr->setup();
 	sceneGroup.add(gui()); // add general scene menu
-	sceneGroup.add(scene->gui()); // add specific scene menu
+	sceneGroup.add(scene_ptr->gui()); // add specific scene menu
 	sceneMenu.setup(sceneGroup);
 }
 
@@ -61,16 +61,16 @@ ofParameterGroup Layer::gui()
 
 
 void Layer::update() {
-	scene->update();
+	scene_ptr->update();
 
-	scene->setColor1(c1);
-	scene->setColor2(c2);
-	scene->setOpacity(opacity);
+	scene_ptr->setColor1(c1);
+	scene_ptr->setColor2(c2);
+	scene_ptr->setOpacity(opacity);
 }
 
 
 void Layer::draw() {
-	scene->draw();
+	scene_ptr->draw();
 	if(id == activeLayer) sceneMenu.draw();
 }
 
@@ -85,42 +85,51 @@ void Layer::deleteScene() {
 }*/
 
 
-Scene *Layer::CreateScene(SceneType Type)
+shared_ptr<Scene> Layer::CreateScene(SceneType Type)
 {
-
+	delete &scene_ptr;
 	switch (Type)
 	{
 	// ##### Defaults
 
 	case Scene_Default:
 	default:
-		return new DefaultScene();
+		return shared_ptr<Scene>(new DefaultScene);
+		//return new DefaultScene();
 	case Scene_None:
 		return nullptr;
 
 	// ##### Growth Models
 
 	case Scene_DLA:
-		return new DLA();
+		return shared_ptr<Scene>(new DLA);
+		//return new DLA();
 	case Scene_DiffLine:
-		return new DiffLine();
+		return shared_ptr<Scene>(new DiffLine);
+		//return new DiffLine();
 	case Scene_SpaceColonization:
-		return new SpaceColonization();
+		return shared_ptr<Scene>(new SpaceColonization);
+		//return new SpaceColonization();
 
 	// ##### Particle Systems
 
 	case Scene_Boids:
-		return new Boids();
+		return shared_ptr<Scene>(new Boids);
+		//return new Boids();
 
 	// ##### Shader Experimentations
 
 	case Scene_ShaderTest:
-		return new ShaderTest();
+		return shared_ptr<Scene>(new ShaderTest);
+		//return new ShaderTest();
 	case Scene_Julia2D:
-		return new Julia2D();
+		return shared_ptr<Scene>(new Julia2D);
+		//return new Julia2D();
 	case Scene_SimplexTerrain:
-		return new SimplexTerrain();
+		return shared_ptr<Scene>(new SimplexTerrain);
+		//return new SimplexTerrain();
 	case Scene_DomainWarping:
-		return new DomainWarping();
+		return shared_ptr<Scene>(new DomainWarping);
+		//return new DomainWarping();
 	}
 }

@@ -85,7 +85,10 @@ class ofApp : public ofBaseApp{
 		ofPolyline polyline;
 
 		// Scenes
-		Layer *layers[NUMLAYERS];
+		//Putting the layers into a c++ vector instead of basic array
+		vector<shared_ptr<Layer>> myLayers;
+	
+		//Layer *layers[NUMLAYERS];
 
 		// Scene Settings
 };

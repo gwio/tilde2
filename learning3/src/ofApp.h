@@ -7,6 +7,11 @@
 #include "ofxPostProcessing.h"
 
 #define NUMLAYERS 3
+struct LayerTransHelper {
+	bool finished, changed;
+	SceneType type;
+	int layer;
+};
 
 class ofApp : public ofBaseApp{
 
@@ -33,6 +38,7 @@ class ofApp : public ofBaseApp{
 		// ##### Custom Functions
 
 		void startScene(SceneType Type);
+		void initSceneChange(SceneType);
 
 		// ##### Load External Elements
 
@@ -75,6 +81,7 @@ class ofApp : public ofBaseApp{
 		// Post Processing
 		//ofxPostProcessing post;
 
+		vector<LayerTransHelper> transitions;
 };
 
 

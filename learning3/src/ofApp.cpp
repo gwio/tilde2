@@ -58,7 +58,38 @@ void ofApp::update(){
 	
 	}
 
+	for (auto& ts : transitions) {
+		if (!ts.finished && !ts.changed) {
+			if (layers[ts.layer]->opacity > 0) {
+				layers[ts.layer]->opacity-=2;
+			}
+			else if (layers[ts.layer]->opacity <= 0) {
+				delete layers[ts.layer];
+				layers[ts.layer] = new Layer(ts.layer + 1, ts.type);
+				layers[ts.layer]->setup();
+				layers[ts.layer]->opacity = 0;
+				ts.changed = true;
+			}
+		}
 
+		if (ts.changed && !ts.finished) {
+			if (layers[ts.layer]->opacity < 255) {
+				layers[ts.layer]->opacity+=2;
+			}
+			else if (layers[ts.layer]->opacity >= 255) {
+				ts.finished = true;
+			}
+		}
+	}
+	//deleting all finished transition; it checks if the element is finished, then deletes it and goes to the next, or just goes to the next
+	for (vector<LayerTransHelper>::iterator it = transitions.begin(); it != transitions.end();) {
+		if (it->finished) {
+			it = transitions.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
 }
 
 //--------------------------------------------------------------
@@ -149,14 +180,14 @@ void ofApp::keyPressed(int key){
 		//fbo.end();
 		break;
 		
-	case 'z': startScene(Scene_DiffLine); break;
-	case 'x': startScene(Scene_DLA); break;
-	case 'c': startScene(Scene_SpaceColonization); break;
-	case 'v': startScene(Scene_ShaderTest); break;
-	case 'b': startScene(Scene_Julia2D); break;
-	case 'n': startScene(Scene_SimplexTerrain); break;
-	case 'm': startScene(Scene_DomainWarping); break;
-	case ',': startScene(Scene_Default); break;
+	case 'z': initSceneChange(Scene_DiffLine); break;
+	case 'x': initSceneChange(Scene_DLA); break;
+	case 'c': initSceneChange(Scene_SpaceColonization); break;
+	case 'v': initSceneChange(Scene_ShaderTest); break;
+	case 'b': initSceneChange(Scene_Julia2D); break;
+	case 'n': initSceneChange(Scene_SimplexTerrain); break;
+	case 'm': initSceneChange(Scene_DomainWarping); break;
+	case ',': initSceneChange(Scene_Default); break;
 	case '1':	layers[0]->setActiveLayer(); break;
 	case '2':	layers[1]->setActiveLayer(); break;
 	case '3':	layers[2]->setActiveLayer(); break;
@@ -186,6 +217,21 @@ void ofApp::startScene(SceneType Type) {                                  // THI
 	}
 }
 
+void ofApp::initSceneChange(SceneType Type) {
+	for (size_t i = 0; i < NUMLAYERS; i++)
+	{
+		if (layers[i]->isActiveLayer())
+		{
+			LayerTransHelper temp;
+			temp.layer = i;
+			temp.finished = false;
+			temp.changed = false;
+			temp.type = Type;
+
+			transitions.push_back(temp);
+		}
+	}
+}
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 

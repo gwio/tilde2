@@ -31,6 +31,7 @@ void ofApp::setup(){
 	{
 		layers[i] = new Layer(i + 1, Scene_Default);
 		layers[i]->setup();
+		layers[i]->inTransition = false;
 	}
 
 	// ##### Post Processing Initiating
@@ -61,7 +62,7 @@ void ofApp::update(){
 	for (auto& ts : transitions) {
 		if (!ts.finished && !ts.changed) {
 			if (layers[ts.layer]->opacity > 0) {
-				layers[ts.layer]->opacity-=2;
+				layers[ts.layer]->opacity-=4;
 			}
 			else if (layers[ts.layer]->opacity <= 0) {
 				delete layers[ts.layer];
@@ -74,10 +75,12 @@ void ofApp::update(){
 
 		if (ts.changed && !ts.finished) {
 			if (layers[ts.layer]->opacity < 255) {
-				layers[ts.layer]->opacity+=2;
+				layers[ts.layer]->opacity+=4;
 			}
 			else if (layers[ts.layer]->opacity >= 255) {
 				ts.finished = true;
+				layers[ts.layer]->inTransition = false;
+				layers[ts.layer]->opacity = 255;
 			}
 		}
 	}
@@ -220,7 +223,7 @@ void ofApp::startScene(SceneType Type) {                                  // THI
 void ofApp::initSceneChange(SceneType Type) {
 	for (size_t i = 0; i < NUMLAYERS; i++)
 	{
-		if (layers[i]->isActiveLayer())
+		if (layers[i]->isActiveLayer() && !layers[i]->inTransition)
 		{
 			LayerTransHelper temp;
 			temp.layer = i;
@@ -229,6 +232,7 @@ void ofApp::initSceneChange(SceneType Type) {
 			temp.type = Type;
 
 			transitions.push_back(temp);
+			layers[i]->inTransition = true;
 		}
 	}
 }
